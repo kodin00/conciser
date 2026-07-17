@@ -102,30 +102,39 @@ struct ContentView: View {
     }
 }
 
-/// The detail pane for a selected (or freshly created) meeting: a tabbed
-/// Transcript / Verdict view. The transcript tab fills the available height
-/// and scrolls internally via `TranscriptView`; nothing here wraps it in an
-/// additional `ScrollView`.
+/// The detail pane for a selected meeting. The transcript remains the primary
+/// workspace while an adjustable, optional summary and verdict sits on the right.
 private struct MeetingDetailView: View {
     let record: MeetingRecord
     let viewModel: AppViewModel
+    @State private var isBriefVisible = true
 
     var body: some View {
-        TabView {
-            transcriptTab
-                .tabItem {
-                    Label("Transcript", systemImage: "text.alignleft")
-                }
+        HSplitView {
+            transcriptPane
+                .frame(minWidth: 420)
 
-            verdictTab
-                .tabItem {
-                    Label("Verdict", systemImage: "sparkles")
-                }
+            if isBriefVisible {
+                briefSidebar
+                    .frame(minWidth: 280, idealWidth: 360, maxWidth: 620)
+            }
         }
-        .padding(20)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    isBriefVisible.toggle()
+                } label: {
+                    Label(
+                        isBriefVisible ? "Hide Summary & Verdict" : "Show Summary & Verdict",
+                        systemImage: "sidebar.right"
+                    )
+                }
+                .help(isBriefVisible ? "Hide summary and verdict" : "Show summary and verdict")
+            }
+        }
     }
 
-    private var transcriptTab: some View {
+    private var transcriptPane: some View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(record.displayTitle)
@@ -139,36 +148,66 @@ private struct MeetingDetailView: View {
 
             TranscriptView(segments: record.segments)
         }
+        .padding(20)
     }
 
     @ViewBuilder
-    private var verdictTab: some View {
+    private var briefSidebar: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 8) {
+                Image(systemName: "sparkles")
+                    .foregroundStyle(.tint)
+                Text("Summary & Verdict")
+                    .font(.headline)
+                Spacer()
+                Button {
+                    isBriefVisible = false
+                } label: {
+                    Image(systemName: "xmark")
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
+                .help("Hide summary and verdict")
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 13)
+
+            Divider()
+
+            briefContent
+        }
+        .background(Color(nsColor: .windowBackgroundColor))
+    }
+
+    @ViewBuilder
+    private var briefContent: some View {
         if let verdict = record.verdict {
             ScrollView {
                 VerdictView(verdict: verdict)
-                    .padding(.vertical, 4)
+                    .padding(16)
             }
         } else {
-            VStack(spacing: 16) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 40, weight: .light))
+            VStack(alignment: .leading, spacing: 18) {
+                Spacer()
+
+                Image(systemName: "text.quote")
+                    .font(.system(size: 32, weight: .light))
                     .foregroundStyle(.secondary)
 
-                VStack(spacing: 6) {
-                    Text("No verdict yet")
-                        .font(.headline)
-                    Text("Generate an AI summary of this meeting's transcript with Gemini.")
-                        .font(.caption)
+                VStack(alignment: .leading, spacing: 7) {
+                    Text("Ready when you are")
+                        .font(.title3.weight(.semibold))
+                    Text("Create a concise summary, key points, and verdict for this meeting. Your transcript is sent to Gemini only after you click the button below.")
+                        .font(.callout)
                         .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: 420)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
 
                 Button {
                     Task { await viewModel.runVerdict() }
                 } label: {
-                    Label("Generate Verdict", systemImage: "sparkles")
-                        .frame(minWidth: 160)
+                    Label("Generate Summary & Verdict", systemImage: "sparkles")
+                        .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
@@ -183,8 +222,11 @@ private struct MeetingDetailView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+
+                Spacer()
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(24)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         }
     }
 

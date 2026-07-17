@@ -40,7 +40,6 @@ struct VerdictService {
         transcript and produce:
         - a concise summary of what was discussed,
         - a list of the key points raised,
-        - the overall sentiment of the meeting,
         - an overall verdict/assessment of the meeting (e.g. was it productive, were decisions \
         made, are there risks or follow-ups).
 
@@ -106,17 +105,12 @@ struct VerdictService {
                 description: "The key points raised during the meeting.",
                 items: ResponseSchema(type: "string")
             ),
-            "sentiment": ResponseSchema(
-                type: "string",
-                description: "The overall sentiment of the meeting.",
-                enumValues: ["Positive", "Neutral", "Negative", "Mixed"]
-            ),
             "verdictText": ResponseSchema(
                 type: "string",
                 description: "An overall verdict/assessment of the meeting."
             )
         ],
-        required: ["summary", "keyPoints", "sentiment", "verdictText"]
+        required: ["summary", "keyPoints", "verdictText"]
     )
 
     // MARK: - Request/response Codable models

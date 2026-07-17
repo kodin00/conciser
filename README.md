@@ -2,7 +2,7 @@
 
 **Turn recorded conversations into clear decisions — without handing your recording to a transcription service.**
 
-Conciser is a native macOS app for turning a video or audio recording into a speaker-labeled transcript, then into a useful meeting verdict: a concise summary, the points that mattered, the overall sentiment, and a quick assessment of what happened.
+Conciser is a native macOS app for turning a video or audio recording into a speaker-labeled transcript, then into a useful meeting brief: a concise summary, the points that mattered, and a quick assessment of what happened.
 
 Drag in a recording. Get back to the conversation.
 
@@ -10,10 +10,10 @@ Drag in a recording. Get back to the conversation.
 
 - **Privacy first.** Transcription and speaker identification stay entirely on your Mac.
 - **Know who said what.** Conciser aligns timestamps with speaker diarization to label the conversation by speaker.
-- **Keep the useful part.** Generate an on-demand verdict with a summary, key points, sentiment, and assessment.
+- **Keep the useful part.** Generate an on-demand meeting brief with a summary, key points, and assessment.
 - **Built for real recordings.** Drop in meeting videos, voice notes, interviews, and more — no re-encoding ceremony.
 
-> Only the optional verdict step uses Google Gemini. Your transcript is sent to Google only after you explicitly click **Generate Verdict**.
+> Only the optional meeting-brief step uses Google Gemini. Your transcript is sent to Google only after you explicitly click **Generate Summary & Verdict**.
 
 ## How it works
 
@@ -32,8 +32,7 @@ video or audio
 1. A searchable, speaker-labeled transcript of your recording.
 2. An optional AI verdict with:
    - a concise meeting summary;
-   - the key points raised;
-   - overall sentiment; and
+   - the key points raised; and
    - an assessment of decisions, follow-ups, and risks.
 
 ## Requirements
@@ -65,7 +64,7 @@ xcodebuild -project Conciser.xcodeproj -scheme Conciser -configuration Debug bui
 1. Drag a video or audio file onto the drop zone, or choose one from Finder.
 2. Wait while Conciser extracts audio, transcribes it, and identifies speakers.
 3. Review the labeled transcript.
-4. Click **Generate Verdict** when you want a concise meeting readout.
+4. Open the right sidebar and click **Generate Summary & Verdict** when you want a concise meeting readout.
 
 Common formats such as `.mp4`, `.mov`, `.m4a`, `.wav`, and `.mp3` are supported.
 
